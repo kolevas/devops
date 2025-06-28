@@ -8,6 +8,21 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: emt
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,8 +34,12 @@ jobs:
           java-version: 21
           cache: maven
 
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml -DskipTests
+      - name: Build and test with Maven
+        run: mvn -B package --file pom.xml
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/emt
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: postgres
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -29,11 +48,11 @@ jobs:
           cache: 'npm'
 
       - name: Install frontend dependencies
-        working-directory: ./EMT-frontend
+        working-directory: ./emt-frontend
         run: npm install
 
       - name: Build frontend
-        working-directory: ./EMT-frontend
+        working-directory: ./emt-frontend
         run: npm run build
 
       - name: Log in to Docker Hub
@@ -48,7 +67,7 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/emt-backend:${{ github.sha }}
 
       - name: Build and push frontend Docker image
-        working-directory: ./EMT-frontend
+        working-directory: ./emt-frontend
         run: |
           docker build --platform=linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/emt-frontend:${{ github.sha }} .
           docker push ${{ secrets.DOCKER_USERNAME }}/emt-frontend:${{ github.sha }}
