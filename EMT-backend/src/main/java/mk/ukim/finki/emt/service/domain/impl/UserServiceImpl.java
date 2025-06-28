@@ -25,6 +25,7 @@ import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     @PersistenceContext
     private EntityManager entityManager;
     private final UserRepository userRepository;
