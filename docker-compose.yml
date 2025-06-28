@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17.4 # Use your specified PostgreSQL version
+    restart: always
+    environment:
+      POSTGRES_USER: emt
+      POSTGRES_PASSWORD: emt
+      POSTGRES_DB: postgres # The database name
+    volumes:
+      - pgdata:/var/lib/postgresql/data # Persist data
+      - ./emt-database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./emt-database/views.sql:/docker-entrypoint-initdb.d/views.sql # Run views script on first start
+    ports:
+      - "2345:5432" # Map host port 2345 to container port 5432 (optional for direct access)
+    healthcheck: # Ensure DB is truly ready before backend starts
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./EMT-backend # Docker will look for Dockerfile in your-app-root/backend
+    platform: linux/arm64
+    ports:
+      - "8080:8080" # Map host port 8080 to container port 8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/postgres # 'db' is the service name, 5432 is internal port
+      SPRING_DATASOURCE_USERNAME: emt
+      SPRING_DATASOURCE_PASSWORD: emt
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update # Set this based on your database migration strategy (e.g., 'none' in production)
+    depends_on:
+      db:
+        condition: service_healthy # Wait until the 'db' service reports healthy
+    # Optional: If you need to map a volume for logs or configuration
+    # volumes:
+    #   - ./backend/logs:/app/logs
+
+  frontend:
+    build: ./emt-frontend # Docker will look for Dockerfile in your-app-root/frontend
+    ports:
+      - "3000:80" # Map host port 3000 to container port 80 (Nginx)
+    depends_on:
+      - backend # Frontend needs backend to be running for API calls
+
+volumes:
+  pgdata: # Define the named volume for PostgreSQL data persistence
