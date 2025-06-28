@@ -52,7 +52,9 @@ public class JwtSecurityWebConfig {
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**",
                                         "/api/user/register",
-                                        "/api/user/login"
+                                        "/api/user/login",
+                                        "/actuator/health/**",
+                                        "/actuator/health"
                                 )
                                 .permitAll()
                                 .requestMatchers(

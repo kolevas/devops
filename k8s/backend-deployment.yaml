@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: emt-project
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command: [ 'sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done;' ]
+      containers:
+        - name: backend
+          image: kolevas/emt-backend:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/postgres?useUnicode=true&characterEncoding=UTF-8&serverTimezone=CET
+            - name: SPRING_DATASOURCE_USERNAME
+              value: emt
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: emt
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 60
+            periodSeconds: 10
