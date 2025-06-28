@@ -1,6 +1,5 @@
 package mk.ukim.finki.emt.service.application.impl;
 
-import mk.ukim.finki.emt.repository.AuthorsPerCountryViewRepository;
 import mk.ukim.finki.emt.service.application.AuthorsPerCountryViewApplicationService;
 import mk.ukim.finki.emt.service.domain.AuthorsPerCountryViewService;
 import org.springframework.stereotype.Service;

@@ -17,6 +17,7 @@ const initialFormData={
     "name" : "",
     "surname" : "",
     "country" : "",
+
 }
 
 const AddAuthorDialog = ({open, onClose, onAdd}) => {
