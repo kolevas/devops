@@ -31,7 +31,7 @@ public class JwtSecurityWebConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "http://emt.local:3000"));
+        corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "http://emt.local:3000", "http://k8s-emtgroup-e9dcfcf1fc-2053161546.eu-central-1.elb.amazonaws.com"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -51,16 +51,16 @@ public class JwtSecurityWebConfig {
                                 .requestMatchers(
                                         "/swagger-ui/**",
                                         "/v3/api-docs/**",
-                                        "/api/user/register",
-                                        "/api/user/login",
+                                        "/user/register",
+                                        "/user/login",
                                         "/actuator/health/**",
                                         "/actuator/health"
                                 )
                                 .permitAll()
                                 .requestMatchers(
-                                        "/api/categories",
-                                        "/api/manufacturers",
-                                        "/api/products"
+                                        "/categories",
+                                        "/manufacturers",
+                                        "/products"
                                 )
                                 .hasAnyRole("USER", "LIBRARIAN")
                                 .anyRequest()

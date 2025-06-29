@@ -4,7 +4,7 @@ metadata:
   name: backend
   namespace: emt-project
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: backend
@@ -22,7 +22,7 @@ spec:
           image: kolevas/emt-backend:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080
+            - containerPort: 9090
           env:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/postgres?useUnicode=true&characterEncoding=UTF-8&serverTimezone=CET
@@ -36,9 +36,14 @@ spec:
                 secretKeyRef:
                   name: db-secret
                   key: POSTGRES_PASSWORD
+            - name: SERVER_PORT
+              value: "9090"
           readinessProbe:
             httpGet:
-              path: /swagger-ui/index.html
-              port: 8080
+              path: /api/actuator/health
+              port: 9090
             initialDelaySeconds: 60
             periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 3

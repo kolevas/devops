@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @RestController()
-@RequestMapping("/api/books")
+@RequestMapping("/books")
 public class BookController {
     private final BookApplicationService bookService;
     private final BookCopyApplicationService copyService;

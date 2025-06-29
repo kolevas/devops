@@ -13,8 +13,10 @@ spec:
       labels:
         app: frontend
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
         - name: frontend
           image: kolevas/emt-frontend:latest
           ports:
-            - containerPort: 3000
+            - containerPort: 80
