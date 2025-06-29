@@ -1,8 +1,8 @@
-# frontend-deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: frontend
+  namespace: emt-project
 spec:
   replicas: 2
   selector:
@@ -18,14 +18,3 @@ spec:
           image: kolevas/emt-frontend:latest
           ports:
             - containerPort: 3000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend
-spec:
-  selector:
-    app: frontend
-  ports:
-    - port: 3000
-  type: ClusterIP

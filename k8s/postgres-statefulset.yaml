@@ -19,11 +19,20 @@ spec:
           image: postgres:latest
           env:
             - name: POSTGRES_USER
-              value: emt
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USER
             - name: POSTGRES_PASSWORD
-              value: emt
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
             - name: POSTGRES_DB
-              value: postgres
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: POSTGRES_DB
           ports:
             - containerPort: 5432
   volumeClaimTemplates:

@@ -27,12 +27,18 @@ spec:
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://postgres:5432/postgres?useUnicode=true&characterEncoding=UTF-8&serverTimezone=CET
             - name: SPRING_DATASOURCE_USERNAME
-              value: emt
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USER
             - name: SPRING_DATASOURCE_PASSWORD
-              value: emt
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /swagger-ui/index.html
               port: 8080
             initialDelaySeconds: 60
             periodSeconds: 10

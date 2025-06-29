@@ -4,10 +4,9 @@ metadata:
   name: postgres
   namespace: emt-project
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
     - port: 5432
       targetPort: 5432
-      nodePort: 32345
   selector:
     app: postgres
