@@ -13,14 +13,9 @@ spec:
       labels:
         app: backend
     spec:
-      initContainers:
-        - name: wait-for-postgres
-          image: busybox
-          command: [ 'sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done;' ]
       containers:
         - name: backend
           image: kolevas/emt-backend:latest
-          imagePullPolicy: Always
           ports:
             - containerPort: 9090
           env:
@@ -42,8 +37,18 @@ spec:
             httpGet:
               path: /api/actuator/health
               port: 9090
-            initialDelaySeconds: 60
+            initialDelaySeconds: 30
             periodSeconds: 10
-            timeoutSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/actuator/health
+              port: 9090
+            initialDelaySeconds: 60
+            periodSeconds: 20
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
