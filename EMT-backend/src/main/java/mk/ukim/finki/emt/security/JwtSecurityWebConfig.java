@@ -58,9 +58,9 @@ public class JwtSecurityWebConfig {
                                 )
                                 .permitAll()
                                 .requestMatchers(
-                                        "/categories",
-                                        "/manufacturers",
-                                        "/products"
+                                        "/books/**",
+                                        "/authors/**",
+                                        "/countries/**"
                                 )
                                 .hasAnyRole("USER", "LIBRARIAN")
                                 .anyRequest()
